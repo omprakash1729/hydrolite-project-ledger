@@ -14,7 +14,113 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cost_items: {
+        Row: {
+          actual_cost: number
+          category: string | null
+          created_at: string
+          description: string | null
+          estimated_cost: number
+          id: string
+          item_name: string
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          actual_cost?: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_cost?: number
+          id?: string
+          item_name: string
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          actual_cost?: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          estimated_cost?: number
+          id?: string
+          item_name?: string
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cost_items_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      projects: {
+        Row: {
+          case_study_no: string | null
+          client_name: string | null
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+          project_date: string | null
+          total_budget: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          case_study_no?: string | null
+          client_name?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+          project_date?: string | null
+          total_budget?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          case_study_no?: string | null
+          client_name?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+          project_date?: string | null
+          total_budget?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
