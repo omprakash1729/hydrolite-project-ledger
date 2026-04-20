@@ -19,10 +19,10 @@ export const StatTile = ({ label, value, hint, tone = "default", className }: Pr
   }[tone];
 
   return (
-    <div className={cn("rounded-2xl p-5 shadow-soft", toneClasses, className)}>
-      <div className="text-xs uppercase tracking-wider opacity-80 font-medium">{label}</div>
-      <div className="mt-2 text-2xl font-display font-bold leading-tight">{value}</div>
-      {hint && <div className="mt-1 text-xs opacity-80">{hint}</div>}
+    <div className={cn("rounded-2xl p-3.5 sm:p-5 shadow-soft", toneClasses, className)}>
+      <div className="text-[10px] sm:text-xs uppercase tracking-wider opacity-80 font-medium">{label}</div>
+      <div className="mt-1.5 sm:mt-2 text-lg sm:text-2xl font-display font-bold leading-tight break-words">{value}</div>
+      {hint && <div className="mt-1 text-[11px] sm:text-xs opacity-80">{hint}</div>}
     </div>
   );
 };

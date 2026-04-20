@@ -50,13 +50,13 @@ const Metrics = () => {
 
   return (
     <AppShell>
-      <section className="mb-6 flex items-end justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-bold">Metrics</h1>
-          <p className="text-muted-foreground">Cost breakdowns and variance analysis.</p>
+      <section className="mb-5 sm:mb-6 flex items-end justify-between gap-3 flex-wrap">
+        <div className="min-w-0">
+          <h1 className="font-display text-2xl sm:text-3xl font-bold">Metrics</h1>
+          <p className="text-sm text-muted-foreground">Cost breakdowns and variance analysis.</p>
         </div>
         <Select value={selected} onValueChange={setSelected}>
-          <SelectTrigger className="w-56 rounded-full bg-card border-0 shadow-soft">
+          <SelectTrigger className="w-full sm:w-56 rounded-full bg-card border-0 shadow-soft h-10">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -66,37 +66,37 @@ const Metrics = () => {
         </Select>
       </section>
 
-      <div className="grid lg:grid-cols-2 gap-4">
-        <div className="rounded-2xl bg-card p-5 shadow-soft">
-          <h2 className="font-display font-bold text-lg mb-4">Spend by Category</h2>
+      <div className="grid lg:grid-cols-2 gap-3 sm:gap-4">
+        <div className="rounded-2xl bg-card p-4 sm:p-5 shadow-soft">
+          <h2 className="font-display font-bold text-base sm:text-lg mb-3 sm:mb-4">Spend by Category</h2>
           {byCategory.length === 0 ? (
             <p className="text-sm text-muted-foreground py-12 text-center">No data.</p>
           ) : (
-            <div className="h-72">
+            <div className="h-64 sm:h-72">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={byCategory} dataKey="value" nameKey="name" outerRadius={90} innerRadius={50}>
+                  <Pie data={byCategory} dataKey="value" nameKey="name" outerRadius={80} innerRadius={45}>
                     {byCategory.map((_, i) => <Cell key={i} fill={COLORS[i % COLORS.length]} />)}
                   </Pie>
                   <Tooltip formatter={(v: number) => fmtCurrency(v)} contentStyle={{ borderRadius: 12, border: "none" }} />
-                  <Legend />
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               </ResponsiveContainer>
             </div>
           )}
         </div>
 
-        <div className="rounded-2xl bg-card p-5 shadow-soft">
-          <h2 className="font-display font-bold text-lg mb-4">Variance per Item</h2>
+        <div className="rounded-2xl bg-card p-4 sm:p-5 shadow-soft">
+          <h2 className="font-display font-bold text-base sm:text-lg mb-3 sm:mb-4">Variance per Item</h2>
           {variance.length === 0 ? (
             <p className="text-sm text-muted-foreground py-12 text-center">No data.</p>
           ) : (
-            <div className="h-72">
+            <div className="h-64 sm:h-72 -ml-2 sm:ml-0">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={variance}>
+                <BarChart data={variance} margin={{ top: 5, right: 8, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="name" tick={{ fontSize: 10 }} />
-                  <YAxis tick={{ fontSize: 11 }} />
+                  <XAxis dataKey="name" tick={{ fontSize: 10 }} interval={0} angle={-25} textAnchor="end" height={60} />
+                  <YAxis tick={{ fontSize: 10 }} width={50} />
                   <Tooltip formatter={(v: number) => fmtCurrency(v)} contentStyle={{ borderRadius: 12, border: "none" }} />
                   <Bar dataKey="Variance" radius={[8, 8, 0, 0]}>
                     {variance.map((d, i) => (
