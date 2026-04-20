@@ -3,11 +3,9 @@ import { GlassSheet } from "./GlassSheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { COST_CATEGORIES, fmtCurrencySigned } from "@/lib/format";
+import { fmtCurrencySigned } from "@/lib/format";
 import { Trash2, TrendingDown, TrendingUp } from "lucide-react";
 
 export type CostItemInput = {
@@ -28,7 +26,7 @@ type Props = {
 };
 
 const empty: CostItemInput = {
-  item_name: "", category: COST_CATEGORIES[0], description: "", estimated_cost: 0, actual_cost: 0,
+  item_name: "", category: "", description: "", estimated_cost: 0, actual_cost: 0,
 };
 
 export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved }: Props) => {
@@ -88,25 +86,7 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
       <div className="space-y-4 mt-2">
         <div>
           <Label>Item Name *</Label>
-          <Input value={form.item_name} onChange={(e) => update("item_name", e.target.value)} placeholder="Glass mosaic tiles" />
-        </div>
-        <div>
-          <Label>Category</Label>
-          <Select value={form.category} onValueChange={(v) => update("category", v)}>
-            <SelectTrigger><SelectValue /></SelectTrigger>
-            <SelectContent>
-              {COST_CATEGORIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <Label>Description</Label>
-          <Textarea
-            rows={2}
-            value={form.description}
-            onChange={(e) => update("description", e.target.value)}
-            placeholder="Optional notes"
-          />
+          <Input value={form.item_name} onChange={(e) => update("item_name", e.target.value)} placeholder="e.g. Cement, Tiles, Labor" />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>

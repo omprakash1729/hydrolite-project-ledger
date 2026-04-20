@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { fmtCurrency } from "@/lib/format";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from "recharts";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { ProjectFormDialog } from "@/components/ProjectFormDialog";
 
 type Project = {
   id: string; name: string; client_name: string | null; location: string | null;
@@ -16,22 +19,23 @@ const Dashboard = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [actuals, setActuals] = useState<Record<string, { actual: number; estimated: number }>>({});
   const [loading, setLoading] = useState(true);
+  const [openNew, setOpenNew] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { data: ps } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-      const { data: items } = await supabase.from("cost_items").select("project_id, estimated_cost, actual_cost");
-      const map: Record<string, { actual: number; estimated: number }> = {};
-      (items ?? []).forEach((i: any) => {
-        const m = (map[i.project_id] ||= { actual: 0, estimated: 0 });
-        m.actual += Number(i.actual_cost) || 0;
-        m.estimated += Number(i.estimated_cost) || 0;
-      });
-      setProjects((ps ?? []) as Project[]);
-      setActuals(map);
-      setLoading(false);
-    })();
-  }, []);
+  const load = async () => {
+    const { data: ps } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
+    const { data: items } = await supabase.from("cost_items").select("project_id, estimated_cost, actual_cost");
+    const map: Record<string, { actual: number; estimated: number }> = {};
+    (items ?? []).forEach((i: any) => {
+      const m = (map[i.project_id] ||= { actual: 0, estimated: 0 });
+      m.actual += Number(i.actual_cost) || 0;
+      m.estimated += Number(i.estimated_cost) || 0;
+    });
+    setProjects((ps ?? []) as Project[]);
+    setActuals(map);
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
 
   const totals = useMemo(() => {
     let est = 0, act = 0;
@@ -47,10 +51,20 @@ const Dashboard = () => {
 
   return (
     <AppShell>
-      <section className="mb-6">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">Overview of every project, estimated vs actual.</p>
+      <section className="mb-6 flex items-start justify-between gap-4 flex-wrap">
+        <div>
+          <h1 className="font-display text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground">Overview of every project, estimated vs actual.</p>
+        </div>
+        <Button
+          className="rounded-full gradient-primary text-primary-foreground border-0 hover:opacity-90"
+          onClick={() => setOpenNew(true)}
+        >
+          <Plus className="h-4 w-4" /> New Project
+        </Button>
       </section>
+
+      <ProjectFormDialog open={openNew} onOpenChange={setOpenNew} onSaved={load} />
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <StatTile label="Projects" value={projects.length} tone="primary" />
