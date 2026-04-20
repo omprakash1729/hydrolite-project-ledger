@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Waves } from "lucide-react";
+import logo from "@/assets/hydrolite-logo.png";
 
 const Auth = () => {
   const { user, loading } = useAuth();
@@ -45,9 +45,7 @@ const Auth = () => {
 
       <div className="relative w-full max-w-md glass shadow-glass rounded-3xl p-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="h-12 w-12 rounded-2xl gradient-primary text-primary-foreground grid place-items-center">
-            <Waves className="h-6 w-6" />
-          </div>
+          <img src={logo} alt="Hydrolite logo" className="h-14 w-14 object-contain" />
           <div>
             <h1 className="font-display text-2xl font-bold">Hydrolite</h1>
             <p className="text-sm text-muted-foreground">Project Ledger</p>
