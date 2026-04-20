@@ -26,20 +26,20 @@ export const ProjectCard = ({ id, name, client_name, location, project_date, tot
   return (
     <Link
       to={`/projects/${id}`}
-      className="block rounded-2xl bg-card p-5 shadow-soft hover:-translate-y-0.5 transition-transform"
+      className="block rounded-2xl bg-card p-4 sm:p-5 shadow-soft hover:-translate-y-0.5 transition-transform"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="font-display font-bold text-lg leading-tight truncate">{name}</h3>
-          {client_name && <p className="text-sm text-muted-foreground mt-0.5 truncate">{client_name}</p>}
+          <h3 className="font-display font-bold text-base sm:text-lg leading-tight truncate">{name}</h3>
+          {client_name && <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 truncate">{client_name}</p>}
         </div>
-        <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${statusTone}`}>{status}</span>
+        <span className={`shrink-0 rounded-full px-2 py-0.5 sm:px-2.5 sm:py-1 text-[10px] sm:text-xs font-medium ${statusTone}`}>{status}</span>
       </div>
 
-      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+      <div className="mt-2 sm:mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[11px] sm:text-xs text-muted-foreground">
         {location && (
-          <span className="inline-flex items-center gap-1">
-            <MapPin className="h-3 w-3" /> {location}
+          <span className="inline-flex items-center gap-1 min-w-0">
+            <MapPin className="h-3 w-3 shrink-0" /> <span className="truncate">{location}</span>
           </span>
         )}
         {project_date && (
@@ -49,19 +49,19 @@ export const ProjectCard = ({ id, name, client_name, location, project_date, tot
         )}
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-3">
+      <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-3">
         <div>
-          <div className="text-xs text-muted-foreground">Budget</div>
-          <div className="font-display font-semibold">{fmtCurrency(total_budget)}</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Budget</div>
+          <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(total_budget)}</div>
         </div>
         <div>
-          <div className="text-xs text-muted-foreground">Spent</div>
-          <div className="font-display font-semibold">{fmtCurrency(actual)}</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Spent</div>
+          <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(actual)}</div>
         </div>
       </div>
 
       <div className="mt-3">
-        <div className="flex items-center justify-between text-xs mb-1.5">
+        <div className="flex items-center justify-between text-[11px] sm:text-xs mb-1.5">
           <span className="text-muted-foreground">Utilization</span>
           <span className="font-medium">{utilization.toFixed(0)}%</span>
         </div>
