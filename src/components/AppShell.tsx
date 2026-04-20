@@ -1,8 +1,9 @@
 import { ReactNode } from "react";
 import { BottomNav } from "./BottomNav";
 import { Button } from "@/components/ui/button";
-import { LogOut, Waves } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
+import logo from "@/assets/hydrolite-logo.png";
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   const { signOut } = useAuth();
@@ -11,9 +12,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
       <header className="sticky top-0 z-30 glass">
         <div className="container flex items-center justify-between h-16">
           <div className="flex items-center gap-2">
-            <div className="h-9 w-9 rounded-xl gradient-primary text-primary-foreground grid place-items-center">
-              <Waves className="h-5 w-5" />
-            </div>
+            <img src={logo} alt="Hydrolite logo" className="h-10 w-10 object-contain" />
             <div>
               <div className="font-display font-bold leading-tight">Hydrolite</div>
               <div className="text-[11px] text-muted-foreground leading-tight">Project Ledger</div>
