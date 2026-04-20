@@ -13,8 +13,8 @@ export type CostItemInput = {
   item_name: string;
   category: string;
   description: string;
-  estimated_cost: number;
-  actual_cost: number;
+  estimated_cost: number | string;
+  actual_cost: number | string;
 };
 
 type Props = {
@@ -26,7 +26,7 @@ type Props = {
 };
 
 const empty: CostItemInput = {
-  item_name: "", category: "", description: "", estimated_cost: 0, actual_cost: 0,
+  item_name: "", category: "", description: "", estimated_cost: "", actual_cost: "",
 };
 
 export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved }: Props) => {
@@ -91,13 +91,13 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
         <div className="grid grid-cols-2 gap-3">
           <div>
             <Label>Estimated Cost</Label>
-            <Input type="number" min={0} value={form.estimated_cost}
-              onChange={(e) => update("estimated_cost", Number(e.target.value))} />
+            <Input type="number" min={0} inputMode="decimal" placeholder="0" value={form.estimated_cost}
+              onChange={(e) => update("estimated_cost", e.target.value)} />
           </div>
           <div>
             <Label>Actual Cost</Label>
-            <Input type="number" min={0} value={form.actual_cost}
-              onChange={(e) => update("actual_cost", Number(e.target.value))} />
+            <Input type="number" min={0} inputMode="decimal" placeholder="0" value={form.actual_cost}
+              onChange={(e) => update("actual_cost", e.target.value)} />
           </div>
         </div>
 
