@@ -81,34 +81,13 @@ export const ProjectFormDialog = ({ open, onOpenChange, initial, onSaved }: Prop
           <Label>Project Name *</Label>
           <Input value={form.name} onChange={(e) => update("name", e.target.value)} placeholder="Backyard Pool — Smith Residence" />
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label>Client</Label>
-            <Input value={form.client_name} onChange={(e) => update("client_name", e.target.value)} />
-          </div>
-          <div>
-            <Label>Case Study #</Label>
-            <Input value={form.case_study_no} onChange={(e) => update("case_study_no", e.target.value)} placeholder="CS-2024-001" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <Label>Location</Label>
-            <Input value={form.location} onChange={(e) => update("location", e.target.value)} />
-          </div>
-          <div>
-            <Label>Date</Label>
-            <Input type="date" value={form.project_date} onChange={(e) => update("project_date", e.target.value)} />
-          </div>
+        <div>
+          <Label>Client</Label>
+          <Input value={form.client_name} onChange={(e) => update("client_name", e.target.value)} />
         </div>
         <div>
-          <Label>Total Budget (USD)</Label>
-          <Input
-            type="number"
-            min={0}
-            value={form.total_budget}
-            onChange={(e) => update("total_budget", Number(e.target.value))}
-          />
+          <Label>Site Location</Label>
+          <Input value={form.location} onChange={(e) => update("location", e.target.value)} />
         </div>
         <div className="flex gap-2 pt-2">
           <Button variant="outline" className="flex-1 rounded-full" onClick={() => onOpenChange(false)}>
