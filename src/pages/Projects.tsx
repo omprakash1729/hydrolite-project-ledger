@@ -14,15 +14,20 @@ type Project = {
 
 const Projects = () => {
   const [projects, setProjects] = useState<Project[]>([]);
-  const [actuals, setActuals] = useState<Record<string, number>>({});
+  const [actuals, setActuals] = useState<Record<string, { actual: number, estimated: number }>>({});
   const [q, setQ] = useState("");
   const [open, setOpen] = useState(false);
 
   const load = async () => {
     const { data: ps } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-    const { data: items } = await supabase.from("cost_items").select("project_id, actual_cost");
-    const m: Record<string, number> = {};
-    (items ?? []).forEach((i: any) => { m[i.project_id] = (m[i.project_id] ?? 0) + (Number(i.actual_cost) || 0); });
+    const { data: items } = await supabase.from("cost_items").select("project_id, actual_cost, estimated_cost");
+    const m: Record<string, { actual: number, estimated: number }> = {};
+    (items ?? []).forEach((i: any) => {
+      const existing = m[i.project_id] || { actual: 0, estimated: 0 };
+      existing.actual += (Number(i.actual_cost) || 0);
+      existing.estimated += (Number(i.estimated_cost) || 0);
+      m[i.project_id] = existing;
+    });
     setProjects((ps ?? []) as Project[]);
     setActuals(m);
   };
@@ -67,7 +72,7 @@ const Projects = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
           {filtered.map((p) => (
-            <ProjectCard key={p.id} {...p} actual={actuals[p.id] ?? 0} />
+            <ProjectCard key={p.id} {...p} actual={actuals[p.id]?.actual ?? 0} estimated={actuals[p.id]?.estimated ?? 0} />
           ))}
         </div>
       )}

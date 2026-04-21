@@ -114,7 +114,7 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             {projects.slice(0, 4).map((p) => (
-              <ProjectCard key={p.id} {...p} actual={actuals[p.id]?.actual ?? 0} />
+              <ProjectCard key={p.id} {...p} actual={actuals[p.id]?.actual ?? 0} estimated={actuals[p.id]?.estimated ?? 0} />
             ))}
           </div>
         )}

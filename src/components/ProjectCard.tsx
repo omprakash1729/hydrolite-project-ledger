@@ -10,10 +10,11 @@ type Props = {
   location: string | null;
   project_date: string | null;
   total_budget: number;
+  estimated: number;
   actual: number;
 };
 
-export const ProjectCard = ({ id, name, client_name, location, project_date, total_budget, actual }: Props) => {
+export const ProjectCard = ({ id, name, client_name, location, project_date, total_budget, estimated, actual }: Props) => {
   const utilization = total_budget > 0 ? (actual / total_budget) * 100 : 0;
   const status = utilization > 100 ? "Over Budget" : utilization > 85 ? "Near Limit" : "On Track";
   const statusTone =
@@ -49,10 +50,14 @@ export const ProjectCard = ({ id, name, client_name, location, project_date, tot
         )}
       </div>
 
-      <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-3">
+      <div className="mt-3 sm:mt-4 grid grid-cols-3 gap-2">
+        <div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Budget</div>
+          <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(total_budget)}</div>
+        </div>
         <div>
           <div className="text-[11px] sm:text-xs text-muted-foreground">Estimated</div>
-          <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(total_budget)}</div>
+          <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(estimated)}</div>
         </div>
         <div>
           <div className="text-[11px] sm:text-xs text-muted-foreground">Actual</div>
