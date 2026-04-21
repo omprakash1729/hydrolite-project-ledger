@@ -51,11 +51,11 @@ export const ProjectCard = ({ id, name, client_name, location, project_date, tot
 
       <div className="mt-3 sm:mt-4 grid grid-cols-2 gap-3">
         <div>
-          <div className="text-[11px] sm:text-xs text-muted-foreground">Budget</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Estimated</div>
           <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(total_budget)}</div>
         </div>
         <div>
-          <div className="text-[11px] sm:text-xs text-muted-foreground">Spent</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Actual</div>
           <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(actual)}</div>
         </div>
       </div>

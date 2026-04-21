@@ -1,11 +1,10 @@
-import { LayoutDashboard, FolderKanban, BarChart3 } from "lucide-react";
+import { LayoutDashboard, FolderKanban } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const items = [
   { to: "/", icon: LayoutDashboard, label: "Dashboard" },
   { to: "/projects", icon: FolderKanban, label: "Projects" },
-  { to: "/metrics", icon: BarChart3, label: "Metrics" },
 ];
 
 export const BottomNav = () => (
