@@ -12,10 +12,10 @@
     --surface-1: 222 100% 97%;             /* #eff4ff */
     --surface-2: 215 100% 91%;             /* #d3e4fe */
 
-    --card: 220 40% 98.5%;                 /* subtle cool off-white */
+    --card: 220 50% 96%;                   /* tinted off-white, clearly distinct from bg */
     --card-foreground: 222 47% 11%;
 
-    --popover: 220 40% 98.5%;
+    --popover: 220 50% 96%;
     --popover-foreground: 222 47% 11%;
 
     /* Maroon primary */
