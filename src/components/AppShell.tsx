@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import logo from "@/assets/hydrolite-logo.png";
+import { ThemeDebugPanel } from "./ThemeDebugPanel";
 
 export const AppShell = ({ children }: { children: ReactNode }) => {
   const { signOut } = useAuth();
@@ -25,6 +26,7 @@ export const AppShell = ({ children }: { children: ReactNode }) => {
       </header>
       <main className="container px-4 pt-4 sm:pt-6">{children}</main>
       <BottomNav />
+      <ThemeDebugPanel />
     </div>
   );
 };
