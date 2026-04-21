@@ -89,6 +89,10 @@ export const ProjectFormDialog = ({ open, onOpenChange, initial, onSaved }: Prop
           <Label>Site Location</Label>
           <Input value={form.location} onChange={(e) => update("location", e.target.value)} />
         </div>
+        <div>
+          <Label>Budget</Label>
+          <Input type="number" step="0.01" value={form.total_budget || ""} onChange={(e) => update("total_budget", Number(e.target.value))} placeholder="0.00" />
+        </div>
         <div className="flex gap-2 pt-2">
           <Button variant="outline" className="flex-1 rounded-full" onClick={() => onOpenChange(false)}>
             Cancel
