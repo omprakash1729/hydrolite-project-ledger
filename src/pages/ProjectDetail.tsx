@@ -20,7 +20,7 @@ type Project = {
   project_date: string | null; case_study_no: string | null; total_budget: number;
 };
 type CostItem = {
-  id: string; item_name: string; category: string | null; description: string | null;
+  id: string; item_name: string; description: string | null;
   estimated_cost: number; actual_cost: number;
 };
 
@@ -46,7 +46,7 @@ const ProjectDetail = () => {
   const totals = useMemo(() => {
     const est = items.reduce((s, i) => s + Number(i.estimated_cost), 0);
     const act = items.reduce((s, i) => s + Number(i.actual_cost), 0);
-    return { est, act, variance: act - est };
+    return { est, act, variance: est - act };
   }, [items]);
 
   if (!project) {
@@ -59,7 +59,6 @@ const ProjectDetail = () => {
     setEditing({
       id: item.id,
       item_name: item.item_name,
-      category: item.category ?? "Other",
       description: item.description ?? "",
       estimated_cost: Number(item.estimated_cost),
       actual_cost: Number(item.actual_cost),
@@ -146,9 +145,9 @@ const ProjectDetail = () => {
         <StatTile label="Estimated" value={fmtCurrency(totals.est)} tone="aqua" />
         <StatTile label="Actual" value={fmtCurrency(totals.act)} />
         <StatTile
-          label={totals.variance >= 0 ? "Over" : "Under"}
+          label={totals.variance < 0 ? "Over Budget" : "Savings"}
           value={fmtCurrency(Math.abs(totals.variance))}
-          tone={totals.variance > 0 ? "danger" : "success"}
+          tone={totals.variance < 0 ? "danger" : "success"}
         />
       </section>
 
@@ -166,26 +165,31 @@ const ProjectDetail = () => {
         ) : (
           <div className="divide-y divide-border">
             {items.map((it) => {
-              const variance = Number(it.actual_cost) - Number(it.estimated_cost);
-              const over = variance > 0;
+              const est = Number(it.estimated_cost);
+              const act = Number(it.actual_cost);
+              const variance = est - act;
+              const over = variance < 0;
+              const varPct = est > 0 ? (Math.abs(variance) / est) * 100 : 0;
+              
               return (
                 <button
                   key={it.id}
                   onClick={() => openEdit(it)}
-                  className="w-full text-left px-4 sm:px-5 py-3.5 sm:py-4 hover:bg-surface-1 transition-colors flex items-center gap-3"
+                  className="w-full text-left px-4 sm:px-5 py-3.5 sm:py-4 hover:bg-surface-1 transition-colors flex items-start gap-3"
                 >
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold truncate text-sm sm:text-base">{it.item_name}</div>
                     <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
-                      Est. {fmtCurrency(Number(it.estimated_cost))}
+                      Est. {fmtCurrency(est)}
+                      {it.description && <span className="ml-2 italic text-muted-foreground opacity-80 break-all line-clamp-2 mt-1">— {it.description}</span>}
                     </div>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className={`text-sm sm:text-base font-semibold ${over ? "text-destructive" : "text-secondary"}`}>
-                      {fmtCurrency(Number(it.actual_cost))}
+                    <div className={`text-sm sm:text-base font-semibold ${over ? "text-destructive" : "text-foreground"}`}>
+                      {fmtCurrency(act)}
                     </div>
-                    <div className={`text-[11px] ${over ? "text-destructive" : "text-secondary"}`}>
-                      {fmtCurrencySigned(variance)}
+                    <div className={`text-[11px] ${over ? "text-destructive" : "text-success"}`}>
+                      {fmtCurrencySigned(Math.abs(variance))} {varPct > 0 && `(${varPct.toFixed(0)}%)`}
                     </div>
                   </div>
                 </button>
@@ -194,10 +198,20 @@ const ProjectDetail = () => {
             <div className="px-4 sm:px-5 py-3.5 sm:py-4 bg-surface-1 flex items-center gap-3 font-display font-bold">
               <div className="flex-1">Project Totals</div>
               <div className="text-right text-sm sm:text-base">
-                <div className="text-muted-foreground text-[11px] font-sans font-normal">Est. {fmtCurrency(totals.est)}</div>
-                <div className={totals.variance > 0 ? "text-destructive" : "text-secondary"}>
-                  {fmtCurrency(totals.act)}
-                </div>
+                {(() => {
+                   const totalVarPct = totals.est > 0 ? (Math.abs(totals.variance) / totals.est) * 100 : 0;
+                   return (
+                     <>
+                       <div className="text-muted-foreground text-[11px] font-sans font-normal">Est. {fmtCurrency(totals.est)}</div>
+                       <div className={totals.variance < 0 ? "text-destructive" : "text-foreground"}>
+                         {fmtCurrency(totals.act)}
+                       </div>
+                       <div className={`text-[11px] font-sans font-normal ${totals.variance < 0 ? "text-destructive" : "text-success"}`}>
+                         {fmtCurrencySigned(Math.abs(totals.variance))} {totalVarPct > 0 && `(${totalVarPct.toFixed(1)}%)`}
+                       </div>
+                     </>
+                   );
+                })()}
               </div>
             </div>
           </div>

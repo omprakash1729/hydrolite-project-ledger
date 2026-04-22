@@ -11,7 +11,6 @@ import { Trash2, TrendingDown, TrendingUp } from "lucide-react";
 export type CostItemInput = {
   id?: string;
   item_name: string;
-  category: string;
   description: string;
   estimated_cost: number | string;
   actual_cost: number | string;
@@ -26,7 +25,7 @@ type Props = {
 };
 
 const empty: CostItemInput = {
-  item_name: "", category: "", description: "", estimated_cost: "", actual_cost: "",
+  item_name: "", description: "", estimated_cost: "", actual_cost: "",
 };
 
 export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved }: Props) => {
@@ -37,8 +36,11 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
     if (open) setForm({ ...empty, ...initial });
   }, [open, initial]);
 
-  const variance = (Number(form.actual_cost) || 0) - (Number(form.estimated_cost) || 0);
-  const overBudget = variance > 0;
+  const est = Number(form.estimated_cost) || 0;
+  const act = Number(form.actual_cost) || 0;
+  const variance = est - act;
+  const overBudget = variance < 0;
+  const variancePct = est > 0 ? (Math.abs(variance) / est) * 100 : 0;
 
   const update = <K extends keyof CostItemInput>(k: K, v: CostItemInput[K]) =>
     setForm((p) => ({ ...p, [k]: v }));
@@ -52,10 +54,9 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
     const payload = {
       project_id: projectId,
       item_name: form.item_name.trim(),
-      category: form.category || null,
       description: form.description.trim() || null,
-      estimated_cost: Number(form.estimated_cost) || 0,
-      actual_cost: Number(form.actual_cost) || 0,
+      estimated_cost: est,
+      actual_cost: act,
     };
     const { error } = form.id
       ? await supabase.from("cost_items").update(payload).eq("id", form.id)
@@ -101,12 +102,18 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
           </div>
         </div>
 
+        <div>
+          <Label>Explanations / Comments</Label>
+          <Input value={form.description} onChange={(e) => update("description", e.target.value)} placeholder="Note any reasons for cost deviations..." />
+        </div>
+
         <div className={`rounded-2xl p-3 flex items-center gap-2 text-sm ${
           overBudget ? "bg-destructive/10 text-destructive" : "bg-secondary/10 text-secondary"
         }`}>
           {overBudget ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
           <span className="font-medium">
-            Variance: {fmtCurrencySigned(variance)} ({overBudget ? "over" : "under"} estimate)
+            Variance: {fmtCurrencySigned(Math.abs(variance))} {variancePct > 0 && `(${variancePct.toFixed(1)}%)`} 
+            {" "}({overBudget ? "over" : "under"} budget)
           </span>
         </div>
 

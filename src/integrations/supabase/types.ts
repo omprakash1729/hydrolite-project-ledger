@@ -17,7 +17,6 @@ export type Database = {
       cost_items: {
         Row: {
           actual_cost: number
-          category: string | null
           created_at: string
           description: string | null
           estimated_cost: number
@@ -28,7 +27,6 @@ export type Database = {
         }
         Insert: {
           actual_cost?: number
-          category?: string | null
           created_at?: string
           description?: string | null
           estimated_cost?: number
@@ -39,7 +37,6 @@ export type Database = {
         }
         Update: {
           actual_cost?: number
-          category?: string | null
           created_at?: string
           description?: string | null
           estimated_cost?: number
