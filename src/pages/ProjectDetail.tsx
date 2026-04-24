@@ -125,7 +125,7 @@ const ProjectDetail = () => {
             <div className="font-display text-lg sm:text-2xl font-bold mt-1 break-words">{fmtCurrency(project.total_budget)}</div>
           </div>
           <div className="rounded-2xl bg-white/15 backdrop-blur p-3 sm:p-4">
-            <div className="text-[10px] sm:text-xs opacity-80 uppercase tracking-wider">Current Spend</div>
+            <div className="text-[10px] sm:text-xs opacity-80 uppercase tracking-wider">Actual Cost (AC)</div>
             <div className="font-display text-lg sm:text-2xl font-bold mt-1 break-words">{fmtCurrency(totals.act)}</div>
           </div>
         </div>
@@ -142,8 +142,8 @@ const ProjectDetail = () => {
       </section>
 
       <section className="grid grid-cols-3 gap-2 sm:gap-3 mb-5 sm:mb-6">
-        <StatTile label="Estimated" value={fmtCurrency(totals.est)} tone="aqua" />
-        <StatTile label="Actual" value={fmtCurrency(totals.act)} />
+        <StatTile label="Budgeted Amount" value={fmtCurrency(totals.est)} tone="aqua" />
+        <StatTile label="Actual Cost" value={fmtCurrency(totals.act)} />
         <StatTile
           label={totals.variance < 0 ? "Over Budget" : "Savings"}
           value={fmtCurrency(Math.abs(totals.variance))}
@@ -180,7 +180,7 @@ const ProjectDetail = () => {
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold truncate text-sm sm:text-base">{it.item_name}</div>
                     <div className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">
-                      Est. {fmtCurrency(est)}
+                      Budget {fmtCurrency(est)}
                       {it.description && <span className="ml-2 italic text-muted-foreground opacity-80 break-all line-clamp-2 mt-1">— {it.description}</span>}
                     </div>
                   </div>
@@ -189,7 +189,7 @@ const ProjectDetail = () => {
                       {fmtCurrency(act)}
                     </div>
                     <div className={`text-[11px] ${over ? "text-destructive" : "text-success"}`}>
-                      {fmtCurrencySigned(Math.abs(variance))} {varPct > 0 && `(${varPct.toFixed(0)}%)`}
+                      {fmtCurrencySigned(variance)} {varPct > 0 && `(${varPct.toFixed(0)}%)`}
                     </div>
                   </div>
                 </button>
@@ -202,12 +202,12 @@ const ProjectDetail = () => {
                    const totalVarPct = totals.est > 0 ? (Math.abs(totals.variance) / totals.est) * 100 : 0;
                    return (
                      <>
-                       <div className="text-muted-foreground text-[11px] font-sans font-normal">Est. {fmtCurrency(totals.est)}</div>
+                       <div className="text-muted-foreground text-[11px] font-sans font-normal">Budget {fmtCurrency(totals.est)}</div>
                        <div className={totals.variance < 0 ? "text-destructive" : "text-foreground"}>
                          {fmtCurrency(totals.act)}
                        </div>
                        <div className={`text-[11px] font-sans font-normal ${totals.variance < 0 ? "text-destructive" : "text-success"}`}>
-                         {fmtCurrencySigned(Math.abs(totals.variance))} {totalVarPct > 0 && `(${totalVarPct.toFixed(1)}%)`}
+                         {fmtCurrencySigned(totals.variance)} {totalVarPct > 0 && `(${totalVarPct.toFixed(1)}%)`}
                        </div>
                      </>
                    );

@@ -56,7 +56,7 @@ const Auth = () => {
           {mode === "signin" ? "Welcome back" : "Create your account"}
         </h2>
         <p className="text-sm text-muted-foreground mb-6">
-          Track estimated vs actual costs across every pool build.
+          Track budget vs actual costs across every pool build.
         </p>
 
         <form onSubmit={submit} className="space-y-4">

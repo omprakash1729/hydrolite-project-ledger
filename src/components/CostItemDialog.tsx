@@ -31,9 +31,19 @@ const empty: CostItemInput = {
 export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved }: Props) => {
   const [form, setForm] = useState<CostItemInput>({ ...empty, ...initial });
   const [saving, setSaving] = useState(false);
+  const [itemNames, setItemNames] = useState<string[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
-    if (open) setForm({ ...empty, ...initial });
+    if (open) {
+      setForm({ ...empty, ...initial });
+      supabase.from("cost_items").select("item_name").then(({ data }) => {
+        if (data) {
+          const names = Array.from(new Set(data.map((d: any) => d.item_name).filter(Boolean)));
+          setItemNames(names as string[]);
+        }
+      });
+    }
   }, [open, initial]);
 
   const est = Number(form.estimated_cost) || 0;
@@ -44,6 +54,10 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
 
   const update = <K extends keyof CostItemInput>(k: K, v: CostItemInput[K]) =>
     setForm((p) => ({ ...p, [k]: v }));
+
+  const filteredItems = itemNames.filter((name) =>
+    name.toLowerCase().includes((form.item_name || "").toLowerCase()) && name !== form.item_name
+  );
 
   const submit = async () => {
     if (!form.item_name.trim()) {
@@ -85,18 +99,46 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
       title={form.id ? "Edit Line Item" : "Add Line Item"}
     >
       <div className="space-y-4 mt-2">
-        <div>
+        <div className="relative">
           <Label>Item Name *</Label>
-          <Input value={form.item_name} onChange={(e) => update("item_name", e.target.value)} placeholder="e.g. Cement, Tiles, Labor" />
+          <Input 
+            value={form.item_name} 
+            onChange={(e) => {
+              update("item_name", e.target.value);
+              setShowDropdown(true);
+            }} 
+            onFocus={() => setShowDropdown(true)}
+            onBlur={() => setTimeout(() => setShowDropdown(false), 200)}
+            placeholder="e.g. Cement, Tiles, Labor" 
+            autoComplete="off"
+          />
+          {showDropdown && filteredItems.length > 0 && (
+            <div className="absolute top-[calc(100%+4px)] left-0 w-full z-50 bg-card border border-border rounded-xl shadow-soft py-1.5 max-h-48 overflow-y-auto">
+              {filteredItems.map((name) => (
+                <button
+                  key={name}
+                  type="button"
+                  className="w-full text-left px-3.5 py-2.5 text-sm hover:bg-surface-1 transition-colors outline-none focus:bg-surface-1"
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevents the input from losing focus immediately
+                    update("item_name", name);
+                    setShowDropdown(false);
+                  }}
+                >
+                  {name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <Label>Estimated Cost</Label>
+            <Label>Budgeted Amount</Label>
             <Input type="number" min={0} inputMode="decimal" placeholder="0" value={form.estimated_cost}
               onChange={(e) => update("estimated_cost", e.target.value)} />
           </div>
           <div>
-            <Label>Actual Cost</Label>
+            <Label>Actual Cost (AC)</Label>
             <Input type="number" min={0} inputMode="decimal" placeholder="0" value={form.actual_cost}
               onChange={(e) => update("actual_cost", e.target.value)} />
           </div>
@@ -112,7 +154,7 @@ export const CostItemDialog = ({ open, onOpenChange, projectId, initial, onSaved
         }`}>
           {overBudget ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
           <span className="font-medium">
-            Variance: {fmtCurrencySigned(Math.abs(variance))} {variancePct > 0 && `(${variancePct.toFixed(1)}%)`} 
+            Variance: {fmtCurrencySigned(variance)} {variancePct > 0 && `(${variancePct.toFixed(1)}%)`} 
             {" "}({overBudget ? "over" : "under"} budget)
           </span>
         </div>

@@ -20,7 +20,7 @@ export function exportProjectPDF(project: Project, items: Item[]) {
   doc.setFontSize(18);
   doc.text("Hydrolite Project Ledger", 14, 14);
   doc.setFontSize(10);
-  doc.text("Estimated vs Actual Cost Report", 14, 22);
+  doc.text("Budget vs Actual Cost Report", 14, 22);
 
   doc.setTextColor(20);
   doc.setFontSize(14);
@@ -41,7 +41,7 @@ export function exportProjectPDF(project: Project, items: Item[]) {
 
   autoTable(doc, {
     startY: 50 + meta.length * 5 + 6,
-    head: [["Item", "Comments", "Estimated", "Actual", "Variance", "Var %"]],
+    head: [["Item", "Comments", "Budgeted Amount", "Actual Cost (AC)", "Variance", "Variance %"]],
     body: items.map((i) => {
       const est = Number(i.estimated_cost || 0);
       const act = Number(i.actual_cost || 0);
@@ -73,7 +73,7 @@ export function exportProjectCSV(project: Project, items: Item[]) {
   const totalPct = totalEst > 0 ? (Math.abs(totalVar) / totalEst) * 100 : 0;
 
   const rows = [
-    ["Item", "Comments", "Estimated", "Actual", "Variance", "Var %"],
+    ["Item", "Comments", "Budgeted Amount", "Actual Cost (AC)", "Variance", "Variance %"],
     ...items.map((i) => {
       const est = Number(i.estimated_cost || 0);
       const act = Number(i.actual_cost || 0);

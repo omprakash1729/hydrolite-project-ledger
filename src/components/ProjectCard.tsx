@@ -56,11 +56,11 @@ export const ProjectCard = ({ id, name, client_name, location, project_date, tot
           <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(total_budget)}</div>
         </div>
         <div>
-          <div className="text-[11px] sm:text-xs text-muted-foreground">Estimated</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Budgeted</div>
           <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(estimated)}</div>
         </div>
         <div>
-          <div className="text-[11px] sm:text-xs text-muted-foreground">Actual</div>
+          <div className="text-[11px] sm:text-xs text-muted-foreground">Actual Cost</div>
           <div className="font-display font-semibold text-sm sm:text-base">{fmtCurrency(actual)}</div>
         </div>
       </div>

@@ -18,20 +18,28 @@ type Project = {
 const Dashboard = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [actuals, setActuals] = useState<Record<string, { actual: number; estimated: number }>>({});
+  const [itemActuals, setItemActuals] = useState<Record<string, { actual: number; estimated: number }>>({});
   const [loading, setLoading] = useState(true);
   const [openNew, setOpenNew] = useState(false);
 
   const load = async () => {
     const { data: ps } = await supabase.from("projects").select("*").order("created_at", { ascending: false });
-    const { data: items } = await supabase.from("cost_items").select("project_id, estimated_cost, actual_cost");
+    const { data: items } = await supabase.from("cost_items").select("project_id, item_name, estimated_cost, actual_cost");
     const map: Record<string, { actual: number; estimated: number }> = {};
+    const iMap: Record<string, { actual: number; estimated: number }> = {};
     (items ?? []).forEach((i: any) => {
       const m = (map[i.project_id] ||= { actual: 0, estimated: 0 });
       m.actual += Number(i.actual_cost) || 0;
       m.estimated += Number(i.estimated_cost) || 0;
+
+      const itemName = i.item_name || 'Uncategorized';
+      const im = (iMap[itemName] ||= { actual: 0, estimated: 0 });
+      im.actual += Number(i.actual_cost) || 0;
+      im.estimated += Number(i.estimated_cost) || 0;
     });
     setProjects((ps ?? []) as Project[]);
     setActuals(map);
+    setItemActuals(iMap);
     setLoading(false);
   };
 
@@ -45,16 +53,22 @@ const Dashboard = () => {
 
   const chartData = projects.slice(0, 8).map((p) => ({
     name: p.name.length > 14 ? p.name.slice(0, 14) + "…" : p.name,
-    Estimated: actuals[p.id]?.estimated ?? 0,
-    Actual: actuals[p.id]?.actual ?? 0,
+    "Budgeted Amount": actuals[p.id]?.estimated ?? 0,
+    "Actual Cost": actuals[p.id]?.actual ?? 0,
   }));
+
+  const sortedItems = useMemo(() => {
+    return Object.entries(itemActuals)
+      .map(([name, vals]) => ({ name, ...vals }))
+      .sort((a, b) => b.actual - a.actual);
+  }, [itemActuals]);
 
   return (
     <AppShell>
       <section className="mb-5 sm:mb-6 flex items-start justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <h1 className="font-display text-2xl sm:text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Estimated vs actual across every project.</p>
+          <p className="text-sm text-muted-foreground">Budget vs actual costs across every project.</p>
         </div>
         <Button
           size="sm"
@@ -69,8 +83,8 @@ const Dashboard = () => {
 
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5 sm:mb-6">
         <StatTile label="Projects" value={projects.length} tone="primary" />
-        <StatTile label="Total Estimated" value={fmtCurrency(totals.est)} tone="aqua" />
-        <StatTile label="Total Actual" value={fmtCurrency(totals.act)} />
+        <StatTile label="Total Budgeted" value={fmtCurrency(totals.est)} tone="aqua" />
+        <StatTile label="Total Actual Cost" value={fmtCurrency(totals.act)} />
         <StatTile
           label={totals.diff >= 0 ? "Net Profit" : "Net Loss"}
           value={fmtCurrency(Math.abs(totals.diff))}
@@ -79,7 +93,7 @@ const Dashboard = () => {
       </section>
 
       <section className="rounded-2xl bg-card p-4 sm:p-5 shadow-soft mb-5 sm:mb-6">
-        <h2 className="font-display font-bold text-base sm:text-lg mb-3 sm:mb-4">Estimated vs Actual</h2>
+        <h2 className="font-display font-bold text-base sm:text-lg mb-3 sm:mb-4">Budget vs Actual</h2>
         {chartData.length === 0 ? (
           <p className="text-sm text-muted-foreground py-8 text-center">No project data yet.</p>
         ) : (
@@ -91,10 +105,29 @@ const Dashboard = () => {
                 <YAxis tick={{ fontSize: 10 }} width={50} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: "none", boxShadow: "var(--shadow-soft)" }} />
                 <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Bar dataKey="Estimated" fill="hsl(var(--secondary))" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="Actual" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Budgeted Amount" fill="hsl(var(--secondary))" radius={[8, 8, 0, 0]} />
+                <Bar dataKey="Actual Cost" fill="hsl(var(--primary))" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
+          </div>
+        )}
+      </section>
+
+      <section className="rounded-2xl bg-card p-4 sm:p-5 shadow-soft mb-5 sm:mb-6">
+        <h2 className="font-display font-bold text-base sm:text-lg mb-3 sm:mb-4">Spend by Category (All Projects)</h2>
+        {sortedItems.length === 0 ? (
+          <p className="text-sm text-muted-foreground py-8 text-center">No item data yet.</p>
+        ) : (
+          <div className="space-y-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+            {sortedItems.map(item => (
+              <div key={item.name} className="flex items-center justify-between p-3 rounded-xl bg-surface-1">
+                <div className="font-medium text-sm">{item.name}</div>
+                <div className="text-right">
+                  <div className="text-sm font-bold text-primary">{fmtCurrency(item.actual)}</div>
+                  <div className="text-xs text-muted-foreground">Budget: {fmtCurrency(item.estimated)}</div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </section>
